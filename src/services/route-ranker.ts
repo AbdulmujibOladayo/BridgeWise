@@ -1,3 +1,5 @@
+import { calculateStellarNetworkScore, StellarNetworkMetrics } from '../scoring/routes/stellar';
+
 export interface BridgeRoute {
   id: string;
   fromChain: string;
@@ -23,6 +25,7 @@ export interface BridgeRoute {
   maxAmount?: string;
   requiresApproval?: boolean;
   confidence?: number; // 0-1, how confident we are in this estimate
+  networkMetrics?: StellarNetworkMetrics;
 }
 
 export interface RankingCriteria {
@@ -30,11 +33,14 @@ export interface RankingCriteria {
   speedWeight: number; // 0-1, importance of fast execution
   reliabilityWeight: number; // 0-1, importance of high success rate
   confidenceWeight: number; // 0-1, importance of confident estimates
+  networkWeight: number; // 0-1, importance of real-time network conditions
   maxSlippage?: number; // maximum acceptable slippage percentage
   maxTime?: number; // maximum acceptable time in minutes
   minSuccessRate?: number; // minimum acceptable success rate
   excludeProviders?: string[]; // providers to exclude
 }
+
+import { calculateStellarNetworkScore, StellarNetworkMetrics } from '../scoring/routes/stellar';
 
 export interface RankedRoute extends BridgeRoute {
   rank: number;
@@ -44,6 +50,7 @@ export interface RankedRoute extends BridgeRoute {
     speedScore: number;
     reliabilityScore: number;
     confidenceScore: number;
+    networkScore: number;
   };
   recommendation: 'best' | 'good' | 'acceptable' | 'risky';
 }
